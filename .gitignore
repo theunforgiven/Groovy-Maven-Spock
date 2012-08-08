@@ -15,6 +15,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+target/
 
 # External tool builders
 .externalToolBuilders/
@@ -94,6 +95,9 @@ DocProject/Help/html
 
 # Click-Once directory
 publish
+
+# intellij
+/.idea/workspace.xml
 
 # Others
 [Bb]in
