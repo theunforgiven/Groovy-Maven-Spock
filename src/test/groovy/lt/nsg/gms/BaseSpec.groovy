@@ -84,13 +84,10 @@ class MyTestExecutionListener implements TestExecutionListener {
 
 @Configuration
 class ContextConfig {
-    ContextConfig() {
-        INSTANCE.print("Context Config Created")
-    }
+    private final static Logger log = LoggerFactory.getLogger(ContextConfig)
 
-    @Bean
-    ContextConfig cc () {
-        return this
+    ContextConfig() {
+        log.info("Context Config Created")
     }
 }
 
