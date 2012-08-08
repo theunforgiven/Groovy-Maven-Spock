@@ -8,6 +8,8 @@
     <artifactId>Groovy-Maven-Spock</artifactId>
     <version>1.0</version>
 
+    <packaging>jar</packaging>
+
     <properties>
         <spring.version>3.1.2.RELEASE</spring.version>
         <spock.version>0.6-groovy-1.8</spock.version>

@@ -1,3 +1,4 @@
+package lt.nsg.gms
 class ClassToTest {
     final int someInt
 

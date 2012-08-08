@@ -1,3 +1,5 @@
+package lt.nsg.gms
+
 import spock.lang.Specification
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
@@ -5,7 +7,10 @@ import org.springframework.test.context.TestExecutionListener
 import org.springframework.test.context.TestContext
 
 import static PrintIndented.INSTANCE
-import groovy.transform.Synchronized
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Bean
+import org.slf4j.LoggerFactory
+import org.slf4j.Logger
 
 @ContextConfiguration(classes = ContextConfig)
 @TestExecutionListeners(listeners = MyTestExecutionListener)
@@ -22,15 +27,28 @@ class BaseSpec extends Specification {
     }
 }
 
-class SuperSpec extends BaseSpec {
-    def setup() { PrintIndented.INSTANCE.printAndIndent "setup super" }
-    def setupSpec() { PrintIndented.INSTANCE.printAndIndent "setup super spec" }
-    def cleanupSpec(){ PrintIndented.INSTANCE.printAndDedent "cleanup super spec" }
-    def cleanup(){ PrintIndented.INSTANCE.printAndDedent "cleanup super" }
+class SuperASpec extends BaseSpec {
+    def setup() { INSTANCE.printAndIndent "setup super a" }
+    def setupSpec() { INSTANCE.printAndIndent "setup super spec a" }
+    def cleanupSpec(){ INSTANCE.printAndDedent "cleanup super spec a" }
+    def cleanup(){ INSTANCE.printAndDedent "cleanup super a" }
 
     def "the super test to run"() {
         expect:
-        PrintIndented.INSTANCE.print "Super Test Executing"
+        INSTANCE.print "Super Test Executing a"
+        true
+    }
+}
+
+class SuperBSpec extends BaseSpec {
+    def setup() { INSTANCE.printAndIndent "setup super b" }
+    def setupSpec() { INSTANCE.printAndIndent "setup super spec b" }
+    def cleanupSpec(){ INSTANCE.printAndDedent "cleanup super spec b" }
+    def cleanup(){ INSTANCE.printAndDedent "cleanup super b" }
+
+    def "the super test to run"() {
+        expect:
+        INSTANCE.print "Super Test Executing b"
         true
     }
 }
@@ -64,11 +82,20 @@ class MyTestExecutionListener implements TestExecutionListener {
     }
 }
 
+@Configuration
 class ContextConfig {
+    ContextConfig() {
+        INSTANCE.print("Context Config Created")
+    }
 
+    @Bean
+    ContextConfig cc () {
+        return this
+    }
 }
 
 class PrintIndented {
+    private final static Logger log = LoggerFactory.getLogger(PrintIndented)
     public static final INSTANCE = new PrintIndented()
 
     private int indentCount = 0;
@@ -89,6 +116,6 @@ class PrintIndented {
 
     private void printMessage(String message) {
         def padding = "".padLeft(indentCount, "-")
-        println "${padding}>$message"
+        log.info "${padding}>$message"
     }
 }
