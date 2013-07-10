@@ -6,6 +6,7 @@ import lt.nsg.gms.scanme.MyVerySpecialComponent
 import org.springframework.aop.TargetSource
 import org.springframework.aop.framework.ProxyFactory
 import org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator
+import org.springframework.aop.framework.autoproxy.TargetSourceCreator
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
@@ -64,7 +65,11 @@ class SpringBeanProxyTest extends Specification {
 public class SpringBeanProxyTestConfiguration {
     @Bean
     PicoAutoProxyFactoryBean picoAutoProxyFactoryBean() {
-        new PicoAutoProxyFactoryBean()
+        def pfb = new PicoAutoProxyFactoryBean()
+        pfb.setProxyTargetClass(true)
+        //one for app, session, and request to delegate to correct container
+        pfb.setCustomTargetSourceCreators([new PicoTargetSourceCreator()].toArray(new PicoTargetSourceCreator[1]))
+        pfb
     }
 }
 
@@ -74,22 +79,15 @@ class PicoAutoProxyFactoryBean extends AbstractAutoProxyCreator {
     protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass, String beanName, TargetSource customTargetSource) throws BeansException {
         return new Object[0]
     }
+}
 
+class PicoTargetSourceCreator implements TargetSourceCreator {
     @Override
-    protected TargetSource getCustomTargetSource(Class<?> beanClass, String beanName) {
+    TargetSource getTargetSource(Class<?> beanClass, String beanName) {
         new PicoTargetSource(beanClass, new PicoContainer())
     }
-
-    @Override
-    protected void customizeProxyFactory(ProxyFactory proxyFactory) {
-        proxyFactory.proxyTargetClass = true
-    }
-
-    @Override
-    protected boolean shouldProxyTargetClass(Class<?> beanClass, String beanName) {
-        return beanClass.isAnnotationPresent(MyVerySpecialComponent)
-    }
 }
+
 public class PicoContainerStatic {
     public static Closure abeanFactory = null;
 }
