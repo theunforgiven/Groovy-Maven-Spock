@@ -24,6 +24,20 @@
         <hibernate.version>4.2.3.Final</hibernate.version>
         <h2.version>1.3.172</h2.version>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>nsg.lt.releases</id>
+            <name>Nsg.lt Releases Repository</name>
+            <url>https://nsg.lt/archiva/repository/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nsg.lt.snapshot</id>
+            <name>Nsg.lt Snapshot Repository</name>
+            <url>https://nsg.lt/archiva/repository/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
